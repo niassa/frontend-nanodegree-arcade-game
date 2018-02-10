@@ -12,7 +12,6 @@
  * This engine makes the canvas' context (ctx) object globally available to make 
  * writing app.js a little simpler to work with.
  */
-
 var Engine = (function(global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
@@ -107,19 +106,19 @@ var Engine = (function(global) {
          * for that particular row of the game level.
          */
         var rowImages = [
-                'images/water-block.png',   // Top row is water
-                'images/stone-block.png',   // Row 1 of 3 of stone
-                'images/stone-block.png',   // Row 2 of 3 of stone
-                'images/stone-block.png',   // Row 3 of 3 of stone
-                'images/grass-block.png',   // Row 1 of 2 of grass
-                'images/grass-block.png'    // Row 2 of 2 of grass
+                'images/water-block.png', // Top row is water
+                'images/stone-block.png', // Row 1 of 3 of stone
+                'images/stone-block.png', // Row 2 of 3 of stone
+                'images/stone-block.png', // Row 3 of 3 of stone
+                'images/grass-block.png', // Row 1 of 2 of grass
+                'images/grass-block.png' // Row 2 of 2 of grass
             ],
             numRows = 6,
             numCols = 5,
             row, col;
-        
+
         // Before drawing, clear existing canvas
-        ctx.clearRect(0,0,canvas.width,canvas.height)
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         /* Loop through the number of rows and columns we've defined above
          * and, using the rowImages array, draw the correct image for that
@@ -137,7 +136,57 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-
+        // *** If the character reaches the water, display Level screen. *** \\
+        if (success) {
+            ctx.strokeStyle = "#000000";
+            ctx.strokeWeight = 3;
+            ctx.shadowOffsetX = 4.0;
+            ctx.shadowOffsetY = 4.0;
+            ctx.lineWidth = 10.0;
+            ctx.fillStyle = "#000000";
+            ctx.fillRect(0, 0, 505, 606);
+            ctx.fillStyle = "#FF0000";
+            var w = 100;
+            var h = 100;
+            var d = Math.min(w, h);
+            var k = 200;
+            // *** If the level is less than 10, display level screen. *** \\
+            if (level < 10) {
+                ctx.font = "60pt Impact";
+                ctx.textAlight = "center";
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 3;
+                ctx.fillStyle = "red";
+                var lvlMsg = "Level " + level + "!";
+                ctx.fillText(lvlMsg, 125, canvas.height / 3);
+                ctx.strokeText(lvlMsg, 125, canvas.height / 3);
+                ctx.font = "30pt Arial";
+                ctx.fillText("Press Enter to continue.", 40, canvas.height / 2 + 50);
+            } else { // *** If the level is greater than 10 (can only go to 10), display Win screen *** \\ 
+                ctx.moveTo(k, k + d / 4);
+                ctx.quadraticCurveTo(k, k, k + d / 4, k);
+                ctx.quadraticCurveTo(k + d / 2, k, k + d / 2, k + d / 4);
+                ctx.quadraticCurveTo(k + d / 2, k, k + d * 3 / 4, k);
+                ctx.quadraticCurveTo(k + d, k, k + d, k + d / 4);
+                ctx.quadraticCurveTo(k + d, k + d / 2, k + d * 3 / 4, k + d * 3 / 4);
+                ctx.lineTo(k + d / 2, k + d);
+                ctx.lineTo(k + d / 4, k + d * 3 / 4);
+                ctx.quadraticCurveTo(k, k + d / 2, k, k + d / 4);
+                ctx.strokeStyle = "white";
+                ctx.stroke();
+                ctx.fill();
+                ctx.font = "60pt Impact";
+                ctx.textAlight = "center";
+                ctx.lineWidth = 3;
+                ctx.fillStyle = "red";
+                ctx.fillText("CONGRATS!", 65, 140);
+                ctx.strokeText("CONGRATS!", 65, 140);
+                ctx.font = "30pt Arial";
+                ctx.fillText("You've won the game!", 50, canvas.height / 2 + 80);
+            }
+            enemies = 0;
+            loadEnemies();
+        }
         renderEntities();
     }
 
@@ -173,6 +222,7 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
+        'images/char-cat-girl.png',
         'images/char-boy.png'
     ]);
     Resources.onReady(init);
